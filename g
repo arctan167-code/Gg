@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="th" data-lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L. ASH — Creative Archive & Studio</title>
+    <style>
+        :root {
+            --bg-color: #080808;
+            --surface-color: #121212;
+            --surface-hover: #1a1a1a;
+            --border-color: #222222;
+            --border-hover: #333333;
+            --text-main: #f3f3f3;
+            --text-secondary: #999999;
+            --text-muted: #666666;
+            --accent: #b0b0b0;
+            --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- LANGUAGE GATE / LANDING SCREEN --- */
+        #lang-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-color);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+            padding: 2rem;
+        }
+
+        #lang-gate.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .gate-content {
+            text-align: center;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gate-title {
+            font-family: var(--font-heading);
+            font-size: clamp(3.5rem, 8vw, 6rem);
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            margin-bottom: 1.25rem;
+            color: var(--text-main);
+        }
+
+        .gate-subtitle {
+            font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            letter-spacing: 0.05em;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        .gate-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--border-hover);
+            color: var(--text-main);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.8rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.1em;
+        }
+
+        .lang-btn:hover {
+            background: var(--text-main);
+            color: var(--bg-color);
+            border-color: var(--text-main);
+            transform: translateY(-2px);
+        }
+
+        .gate-footer-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .gate-contact {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            width: 100%;
+        }
+
+        .gate-contact-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            transition: color 0.2s;
+            text-transform: uppercase;
+        }
+
+        .gate-contact-link:hover {
+            color: var(--text-main);
+        }
+
+        /* --- MAIN APP WRAPPER --- */
+        #app {
+            opacity: 0;
+            transition: opacity 0.8s ease 0.2s;
+        }
+
+        #app.visible {
+            opacity: 1;
+        }
+
+        /* --- NAVIGATION --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(8, 8, 8, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 5%;
+        }
+
+        .nav-logo {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .lang-switch {
+            background: transparent;
+            border: 1px solid var(--border-hover);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.7rem;
+            cursor: pointer;
+            font-family: var(--font-heading);
+            letter-spacing: 0.1em;
+            transition: all 0.2s;
+        }
+
+        .lang-switch:hover {
+            color: var(--text-main);
+            border-color: var(--text-secondary);
+        }
+
+        /* --- LAYOUT CONTAINER --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        section {
+            padding: 7rem 0 5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 8rem;
+        }
+
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-hover);
+            padding: 0.9rem 1.8rem;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: fit-content;
+        }
+
+        .btn-primary:hover {
+            background: var(--text-main);
+            color: var(--bg-color);
+            border-color: var(--text-main);
+            transform: translateX(4px);
+        }
+
+        /* --- SECTION HEADINGS --- */
+        .section-header {
+            margin-bottom: 3.5rem;
+        }
+
+        .section-tag {
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 600px;
+        }
+
+        /* --- FEATURED CARD --- */
+        .featured-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 3rem;
+            margin-top: 3rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .featured-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .featured-badge {
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .featured-meta {
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            font-family: var(--font-heading);
+        }
+
+        .featured-heading {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.03em;
+        }
+
+        .featured-text {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* --- WORKS GRID --- */
+        .works-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .work-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .work-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .work-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .work-num {
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+        }
+
+        .work-cat {
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .work-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.03em;
+        }
+
+        .work-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .work-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            transition: color 0.2s;
+        }
+
+        .work-link:hover {
+            color: var(--accent);
+        }
+
+        /* --- LAB GRID --- */
+        .lab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .lab-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.3s;
+        }
+
+        .lab-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .lab-status {
+            font-family: var(--font-heading);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            padding: 0.25rem 0.6rem;
+            border: 1px solid var(--border-hover);
+            width: fit-content;
+            margin-bottom: 1.25rem;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .lab-title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .lab-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* --- CAD SERVICES SECTION --- */
+        .cad-container {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 3rem;
+            margin-top: 2rem;
+        }
+
+        .cad-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .cad-box h3 {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            letter-spacing: 0.05em;
+        }
+
+        .cad-box ul {
+            list-style: none;
+        }
+
+        .cad-box ul li {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        .cad-box ul li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--text-muted);
+        }
+
+        .cad-footer-box {
+            border-top: 1px solid var(--border-color);
+            padding-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .cad-note {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        /* --- ABOUT --- */
+        .about-content {
+            max-width: 750px;
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            font-weight: 300;
+        }
+
+        .about-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- CONTACT --- */
+        .contact-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 1rem 1.8rem;
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background-color: var(--surface-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .contact-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 4rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-family: var(--font-heading);
+            letter-spacing: 0.1em;
+        }
+
+        .footer-logo {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .featured-card, .cad-container {
+                padding: 1.5rem;
+            }
+            .contact-links {
+                grid-template-columns: 1fr;
+            }
+            .gate-contact {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            footer {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LANGUAGE GATE / LANDING SCREEN -->
+    <div id="lang-gate">
+        <div class="gate-content">
+            <h1 class="gate-title">L. ASH</h1>
+            <p class="gate-subtitle">Stories, experiments & things I made.</p>
+            
+            <div class="gate-buttons">
+                <button class="lang-btn" onclick="selectLanguage('th')">ภาษาไทย</button>
+                <button class="lang-btn" onclick="selectLanguage('en')">ENGLISH</button>
+            </div>
+
+            <div class="gate-footer-note">An independent creative archive.</div>
+
+            <div class="gate-contact">
+                <a href="mailto:arctan167@gmail.com" class="gate-contact-link">Email ↗</a>
+                <a href="https://github.com/arctan167-code" target="_blank" class="gate-contact-link">GitHub ↗</a>
+                <a href="https://instagram.com/Luna_Ahctan" target="_blank" class="gate-contact-link">Instagram ↗</a>
+                <a href="https://www.tiktok.com/@study.w.kaak" target="_blank" class="gate-contact-link">TikTok ↗</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTENT -->
+    <div id="app">
+        <!-- NAVIGATION -->
+        <header>
+            <a href="#home" class="nav-logo">L. ASH</a>
+            <ul class="nav-links">
+                <li><a href="#works" data-i18n="nav_works">WORKS</a></li>
+                <li><a href="#lab" data-i18n="nav_lab">LAB</a></li>
+                <li><a href="#cad" data-i18n="nav_cad">CAD SERVICES</a></li>
+                <li><a href="#about" data-i18n="nav_about">ABOUT</a></li>
+                <li><a href="#contact" data-i18n="nav_contact">CONTACT</a></li>
+                <li><button class="lang-switch" id="lang-toggle-btn" onclick="toggleLanguage()">TH / EN</button></li>
+            </ul>
+        </header>
+
+        <!-- HOME -->
+        <section id="home" class="hero container">
+            <h1 class="hero-title" data-i18n="hero_title">Stories, experiments & things I made.</h1>
+            <p class="hero-subtitle" data-i18n="hero_desc">I create games, websites, experiments, and small ideas that turn into something real.</p>
+            <a href="#works" class="btn-primary" data-i18n="hero_btn">EXPLORE WORKS →</a>
+
+            <!-- FEATURED -->
+            <div class="featured-card">
+                <div class="featured-badge" data-i18n="feat_badge">FEATURED WORK</div>
+                <div class="featured-meta">001 — Psychological · Social · Narrative</div>
+                <h3 class="featured-heading">You’re Here, Aren’t You?</h3>
+                <p class="featured-text" data-i18n="feat_desc">A short narrative game about two children growing up in different families, shaped by circumstances they never chose.</p>
+                <a href="https://arctan167-code.github.io/index.html/" target="_blank" class="btn-primary" data-i18n="feat_btn">PLAY GAME ↗</a>
+            </div>
+        </section>
+
+        <!-- WORKS -->
+        <section id="works" class="container">
+            <div class="section-header">
+                <span class="section-tag" data-i18n="works_tag">WORKS</span>
+                <h2 class="section-title" data-i18n="works_title">Things I've made.</h2>
+                <p class="section-desc" data-i18n="works_desc">Games, web experiences, and interactive projects.</p>
+            </div>
+
+            <div class="works-grid">
+                <!-- WORK 1 -->
+                <div class="work-card">
+                    <div>
+                        <div class="work-header">
+                            <span class="work-num">001</span>
+                            <span class="work-cat">Psychological · Social · Narrative</span>
+                        </div>
+                        <h3 class="work-title">You’re Here, Aren’t You?</h3>
+                        <p class="work-desc" data-i18n="work1_desc">A short narrative game about two children growing up in different families, shaped by circumstances they never chose.</p>
+                    </div>
+                    <a href="https://arctan167-code.github.io/index.html/" target="_blank" class="work-link" data-i18n="work1_btn">PLAY GAME ↗</a>
+                </div>
+
+                <!-- WORK 2 -->
+                <div class="work-card">
+                    <div>
+                        <div class="work-header">
+                            <span class="work-num">002</span>
+                            <span class="work-cat">Adventure · Educational · Language Learning</span>
+                        </div>
+                        <h3 class="work-title">Senku’s Mackerel Quest</h3>
+                        <p class="work-desc" data-i18n="work2_desc">Join Senku on an adventure through mysterious places, stories, and quests.</p>
+                    </div>
+                    <a href="https://arctan167-code.github.io/zenku/" target="_blank" class="work-link" data-i18n="work2_btn">PLAY GAME ↗</a>
+                </div>
+
+                <!-- WORK 3 -->
+                <div class="work-card">
+                    <div>
+                        <div class="work-header">
+                            <span class="work-num">003</span>
+                            <span class="work-cat">Language Learning · Interactive Web</span>
+                        </div>
+                        <h3 class="work-title">English A1 Interactive</h3>
+                        <p class="work-desc" data-i18n="work3_desc">An interactive English learning experience for beginners, featuring lessons, flashcards, speaking practice, and quizzes.</p>
+                    </div>
+                    <a href="https://arctan167-code.github.io/language-game/" target="_blank" class="work-link" data-i18n="work3_btn">OPEN PROJECT ↗</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- LAB -->
+        <section id="lab" class="container">
+            <div class="section-header">
+                <span class="section-tag">LAB</span>
+                <h2 class="section-title">LAB</h2>
+                <p class="section-desc" data-i18n="lab_desc">A place for experiments, prototypes, and things I'm still building.</p>
+            </div>
+
+            <div class="lab-grid">
+                <div class="lab-card">
+                    <div>
+                        <div class="lab-status">BUILDING</div>
+                        <h3 class="lab-title">Wardrobe Intelligence</h3>
+                        <p class="lab-desc" data-i18n="lab1_desc">AI ที่วิเคราะห์เสื้อผ้าที่มีอยู่แล้ว ช่วยจัดการตู้เสื้อผ้า แนะนำการแต่งตัว และช่วยดูว่าอะไรที่ควรซื้อจริง ๆ</p>
+                    </div>
+                </div>
+
+                <div class="lab-card">
+                    <div>
+                        <div class="lab-status">EXPERIMENTAL</div>
+                        <h3 class="lab-title">LUNA OS</h3>
+                        <p class="lab-desc" data-i18n="lab2_desc">ระบบส่วนตัวสำหรับจัดการ Projects / Work / Life</p>
+                    </div>
+                </div>
+
+                <div class="lab-card">
+                    <div>
+                        <div class="lab-status">EXPERIMENTAL</div>
+                        <h3 class="lab-title">AI Trading Tutor</h3>
+                        <p class="lab-desc" data-i18n="lab3_desc">ระบบทดลองสำหรับเรียนรู้ Market Analysis และบันทึกการเทรด</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CAD SERVICES -->
+        <section id="cad" class="container">
+            <div class="section-header">
+                <span class="section-tag" data-i18n="cad_tag">PROFESSIONAL SERVICE</span>
+                <h2 class="section-title">CAD SERVICES</h2>
+                <p class="section-desc" data-i18n="cad_desc">รับเขียนแบบ SolidWorks & AutoCAD ตามรายละเอียดและไฟล์อ้างอิง</p>
+            </div>
+
+            <div class="cad-container">
+                <div class="cad-grid">
+                    <div class="cad-box">
+                        <h3>SolidWorks</h3>
+                        <ul>
+                            <li>3D Modeling</li>
+                            <li>Part Design</li>
+                            <li>Assembly</li>
+                        </ul>
+                    </div>
+                    <div class="cad-box">
+                        <h3>AutoCAD</h3>
+                        <ul>
+                            <li>2D Drawing</li>
+                            <li>Technical Drawing</li>
+                            <li>Drafting</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cad-footer-box">
+                    <p class="cad-note" data-i18n="cad_note">รับเขียนแบบตามรายละเอียดและไฟล์อ้างอิงที่ลูกค้าส่งมา สามารถส่งรายละเอียดงานมาให้ประเมินราคาได้</p>
+                    <a href="https://line.me/ti/p/~120462tingnung" target="_blank" class="btn-primary" data-i18n="cad_btn">ADD LINE (120462tingnung) ↗</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section id="about" class="container">
+            <div class="section-header">
+                <span class="section-tag" data-i18n="about_tag">ABOUT</span>
+                <h2 class="section-title" data-i18n="about_title">ABOUT L. ASH</h2>
+            </div>
+            <div class="about-content" data-i18n="about_text">
+                <p>L. ASH is an independent creator based in Thailand.</p>
+                <p>I make games, websites, experiments, and things that I find interesting.</p>
+                <p>Some are useful.<br>Some are strange.<br>Some are simply ideas that I wanted to see become real.</p>
+                <p>This is where I keep them.</p>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" class="container">
+            <div class="section-header">
+                <span class="section-tag" data-i18n="contact_tag">CONTACT</span>
+                <h2 class="section-title" data-i18n="contact_title">GET IN TOUCH</h2>
+                <p class="section-desc" data-i18n="contact_desc">Have an idea, want to collaborate, or just want to say hi?</p>
+            </div>
+            <div class="contact-links">
+                <a href="mailto:arctan167@gmail.com" class="contact-btn">
+                    <span>EMAIL ↗</span>
+                    <span class="contact-sub">arctan167@gmail.com</span>
+                </a>
+                <a href="https://github.com/arctan167-code" target="_blank" class="contact-btn">
+                    <span>GITHUB ↗</span>
+                    <span class="contact-sub">arctan167-code</span>
+                </a>
+                <a href="https://instagram.com/Luna_Ahctan" target="_blank" class="contact-btn">
+                    <span>INSTAGRAM ↗</span>
+                    <span class="contact-sub">@Luna_Ahctan</span>
+                </a>
+                <a href="https://www.tiktok.com/@study.w.kaak" target="_blank" class="contact-btn">
+                    <span>TIKTOK ↗</span>
+                    <span class="contact-sub" data-i18n="tt_desc">Study w/ kaak (ช่องสรุปเนื้อหาเรียนและ Study Notes)</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <a href="#home" class="footer-logo">L. ASH</a>
+            <div data-i18n="footer_copy">L. ASH © 2026 — Stories, experiments & things I made.</div>
+        </footer>
+    </div>
+
+    <script>
+        const translations = {
+            th: {
+                nav_works: "WORKS",
+                nav_lab: "LAB",
+                nav_cad: "CAD SERVICES",
+                nav_about: "ABOUT",
+                nav_contact: "CONTACT",
+                hero_title: "เรื่องราว การทดลอง และสิ่งที่ฉันสร้าง",
+                hero_desc: "ฉันสร้างเกม เว็บไซต์ งานทดลอง และไอเดียเล็ก ๆ ที่อยากทำให้กลายเป็นของจริง",
+                hero_btn: "ดูผลงาน →",
+                feat_badge: "ผลงานเด่น",
+                feat_desc: "เรื่องราวของเด็กสองคนที่เกิดมาในครอบครัวต่างกัน และต้องเติบโตไปพร้อมกับสิ่งที่ไม่เคยเป็นคนเลือก",
+                feat_btn: "เล่นเกม →",
+                works_tag: "ผลงาน",
+                works_title: "สิ่งที่ฉันสร้างขึ้น",
+                works_desc: "เกม เว็บไซต์ และโปรเจกต์เชิงอินเทอร์แอคทีฟ",
+                work1_desc: "เรื่องราวของเด็กสองคนที่เกิดมาในครอบครัวต่างกัน และต้องเติบโตไปพร้อมกับผลของสิ่งที่พวกเขาไม่เคยเป็นคนเลือก",
+                work1_btn: "เล่นเกม ↗",
+                work2_desc: "ออกเดินทางไปพร้อมกับ Senku ในการผจญภัยผ่านสถานที่ต่าง ๆ พร้อมภารกิจและเรื่องราวที่รอให้ค้นพบ",
+                work2_btn: "เล่นเกม ↗",
+                work3_desc: "เว็บไซต์ฝึกภาษาอังกฤษระดับ A1 ผ่านบทเรียน Flashcards การฝึกพูด และแบบทดสอบแบบ Interactive",
+                work3_btn: "เปิดโปรเจกต์ ↗",
+                lab_desc: "พื้นที่สำหรับงานทดลอง Prototype และสิ่งที่ฉันกำลังพัฒนา",
+                lab1_desc: "AI ที่วิเคราะห์เสื้อผ้าที่มีอยู่แล้ว ช่วยจัดการตู้เสื้อผ้า แนะนำการแต่งตัว และช่วยดูว่าอะไรที่ควรซื้อจริง ๆ",
+                lab2_desc: "ระบบส่วนตัวสำหรับจัดการ Projects / Work / Life",
+                lab3_desc: "ระบบทดลองสำหรับเรียนรู้ Market Analysis และบันทึกการเทรด",
+                cad_tag: "บริการรับจ้าง",
+                cad_desc: "รับเขียนแบบ SolidWorks & AutoCAD ตามรายละเอียดและไฟล์อ้างอิง",
+                cad_note: "รับเขียนแบบตามรายละเอียดและไฟล์อ้างอิงที่ลูกค้าส่งมา สามารถส่งรายละเอียดงานมาให้ประเมินราคาได้",
+                cad_btn: "แอด LINE ประเมินราคา (120462tingnung) ↗",
+                about_tag: "เกี่ยวกับ",
+                about_title: "เกี่ยวกับ L. ASH",
+                about_text: `
+                    <p>L. ASH คือผู้สร้างอิสระจากประเทศไทย</p>
+                    <p>ฉันสร้างเกม เว็บไซต์ งานทดลอง และสิ่งต่าง ๆ ที่ฉันสนใจ</p>
+                    <p>บางอย่างมีประโยชน์<br>บางอย่างแปลก<br>และบางอย่างเป็นเพียงไอเดียที่ฉันอยากเห็นมันเกิดขึ้นจริง</p>
+                    <p>ที่นี่คือพื้นที่สำหรับเก็บทุกสิ่งเหล่านั้น</p>
+                `,
+                contact_tag: "ติดต่อ",
+                contact_title: "ติดต่อ",
+                contact_desc: "มีไอเดีย อยากร่วมงาน หรืออยากพูดคุยกัน?",
+                tt_desc: "Study w/ kaak (ช่องสรุปเนื้อหาเรียนและ Study Notes)",
+                footer_copy: "L. ASH © 2026 — เรื่องราว การทดลอง และสิ่งที่ฉันสร้าง"
+            },
+            en: {
+                nav_works: "WORKS",
+                nav_lab: "LAB",
+                nav_cad: "CAD SERVICES",
+                nav_about: "ABOUT",
+                nav_contact: "CONTACT",
+                hero_title: "Stories, experiments & things I made.",
+                hero_desc: "I create games, websites, experiments, and small ideas that turn into something real.",
+                hero_btn: "EXPLORE WORKS →",
+                feat_badge: "FEATURED WORK",
+                feat_desc: "A short narrative game about two children growing up in different families, shaped by circumstances they never chose.",
+                feat_btn: "PLAY GAME ↗",
+                works_tag: "WORKS",
+                works_title: "Things I've made.",
+                works_desc: "Games, web experiences, and interactive projects.",
+                work1_desc: "A short narrative game about two children growing up in different families, shaped by circumstances they never chose.",
+                work1_btn: "PLAY GAME ↗",
+                work2_desc: "Join Senku on an adventure through mysterious places, stories, and quests.",
+                work2_btn: "PLAY GAME ↗",
+                work3_desc: "An interactive English learning experience for beginners, featuring lessons, flashcards, speaking practice, and quizzes.",
+                work3_btn: "OPEN PROJECT ↗",
+                lab_desc: "A place for experiments, prototypes, and things I'm still building.",
+                lab1_desc: "AI that analyzes your existing wardrobe, helps manage clothes, and advises on what to actually buy.",
+                lab2_desc: "Personal system for managing Projects / Work / Life.",
+                lab3_desc: "Experimental system for learning Market Analysis and logging trades.",
+                cad_tag: "PROFESSIONAL SERVICE",
+                cad_desc: "SolidWorks & AutoCAD drafting services based on your references and details.",
+                cad_note: "Drafting services available based on reference files and project specs. Send details for a price estimate.",
+                cad_btn: "ADD LINE FOR ESTIMATE (120462tingnung) ↗",
+                about_tag: "ABOUT",
+                about_title: "ABOUT L. ASH",
+                about_text: `
+                    <p>L. ASH is an independent creator based in Thailand.</p>
+                    <p>I make games, websites, experiments, and things that I find interesting.</p>
+                    <p>Some are useful.<br>Some are strange.<br>Some are simply ideas that I wanted to see become real.</p>
+                    <p>This is where I keep them.</p>
+                `,
+                contact_tag: "CONTACT",
+                contact_title: "GET IN TOUCH",
+                contact_desc: "Have an idea, want to collaborate, or just want to say hi?",
+                tt_desc: "Study w/ kaak (Study summary channel & Study Notes)",
+                footer_copy: "L. ASH © 2026 — Stories, experiments & things I made."
+            }
+        };
+
+        let currentLang = 'th';
+
+        function selectLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lash_lang', lang);
+            updateContent();
+            
+            const gate = document.getElementById('lang-gate');
+            gate.classList.add('fade-out');
+            
+            const app = document.getElementById('app');
+            app.classList.add('visible');
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'th' ? 'en' : 'th';
+            localStorage.setItem('lash_lang', currentLang);
+            updateContent();
+        }
+
+        function updateContent() {
+            const t = translations[currentLang];
+            document.documentElement.setAttribute('lang', currentLang);
+            document.documentElement.setAttribute('data-lang', currentLang);
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    if (key === 'about_text') {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            const toggleBtn = document.getElementById('lang-toggle-btn');
+            if (toggleBtn) {
+                toggleBtn.textContent = currentLang === 'th' ? 'EN' : 'TH';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('lash_lang');
+            if (savedLang) {
+                currentLang = savedLang;
+                updateContent();
+                const gate = document.getElementById('lang-gate');
+                gate.style.display = 'none';
+                const app = document.getElementById('app');
+                app.classList.add('visible');
+            }
+        });
+    </script>
+</body>
+</html>
